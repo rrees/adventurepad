@@ -1,15 +1,7 @@
-from google.appengine.dist import use_library
-use_library('django', '1.2')
-
-import wsgiref.handlers
 import os
 
 import webapp2
 import jinja2
-
-from google.appengine.ext import webapp
-from google.appengine.ext.webapp import template
-
 
 from queries import all_titles
 from forms import DestinyQuestFightForm
@@ -21,30 +13,20 @@ templates = jinja2.Environment(
     extensions=['jinja2.ext.autoescape'],
     autoescape=True)
 
-def find_template(template_name):
-	return os.path.join(os.path.dirname(__file__), 'templates', template_name)
-
-
-class MainHandler(webapp.RequestHandler):
+class MainHandler(webapp2.RequestHandler):
 
 	def get(self):
-		template_path = os.path.join(os.path.dirname(__file__), 'templates', 'index.html')
-		self.response.out.write(template.render(template_path, {}))
+		template = templates.get_template('index.html')
+		self.response.out.write(template.render({}))
 
-class AdventuresHandler(webapp.RequestHandler):
+class DestinyQuestFightHandler(webapp2.RequestHandler):
 	
 	def get(self):
-		template_path = os.path.join(os.path.dirname(__file__), 'templates', 'titles.html')
-		self.response.out.write(template.render(template_path, {'titles' : all_titles()}))
-		
-class DestinyQuestFightHandler(webapp.RequestHandler):
-	
-	def get(self):
-		template_path = find_template('dq-fight.html')
-		self.response.out.write(template.render(template_path, {'form' : DestinyQuestFightForm()}))
+		template = templates.get_template('dq-fight.html')
+		self.response.out.write(template.render({'form' : DestinyQuestFightForm()}))
 		
 	def post(self):
-		template_path = find_template('dq-fight.html')
+		template = templates.get_template('dq-fight.html')
 		form = DestinyQuestFightForm(self.request.POST)
 		if form.is_valid():
 			hero = Combatant('Player', form.cleaned_data['player_health'],
@@ -63,12 +45,12 @@ class DestinyQuestFightHandler(webapp.RequestHandler):
 			'winner' : "player" if results[-1]['player']['health'] > results[-1]['monster']['health'] else form.cleaned_data['monster_name'] 
 		}
 
-		self.response.out.write(template.render(template_path, template_data))
+		self.response.out.write(template.render(template_data))
 
-class DiceHandler(webapp.RequestHandler):
+class DiceHandler(webapp2.RequestHandler):
 	def get(self):
-		template_path = find_template('dice.html')
-		self.response.out.write(template.render(template_path, {}))
+		template = templates.get_template('dice.html')
+		self.response.out.write(template.render({}))
 
 app = webapp2.WSGIApplication([
 		('/', MainHandler),
