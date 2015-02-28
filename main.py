@@ -4,6 +4,9 @@ use_library('django', '1.2')
 import wsgiref.handlers
 import os
 
+import webapp2
+import jinja2
+
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 
@@ -13,6 +16,10 @@ from forms import DestinyQuestFightForm
 from destiny_quest.fight import resolve_fight
 from destiny_quest.models import Combatant
 
+templates = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), 'templates')),
+    extensions=['jinja2.ext.autoescape'],
+    autoescape=True)
 
 def find_template(template_name):
 	return os.path.join(os.path.dirname(__file__), 'templates', template_name)
@@ -63,14 +70,8 @@ class DiceHandler(webapp.RequestHandler):
 		template_path = find_template('dice.html')
 		self.response.out.write(template.render(template_path, {}))
 
-def main():
-	application = webapp.WSGIApplication([
+app = webapp2.WSGIApplication([
 		('/', MainHandler),
 		('/destiny-quest/fight', DestinyQuestFightHandler),
 		('/dice', DiceHandler), ],
 		debug=True)
-	wsgiref.handlers.CGIHandler().run(application)
-
-
-if __name__ == '__main__':
-	main()
