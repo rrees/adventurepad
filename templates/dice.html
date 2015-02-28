@@ -1,0 +1,29 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<h1>Common dice types</h1>
+
+<p id="result"></p>
+
+<ul>
+	<li><button class="die" data-die-type="d6">d6</button></li>
+	<li><button class="die" data-die-type="d8">d8</button></li>
+	<li><button class="die" data-die-type="d20">d20</button></li>
+</ul>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(function() {
+	var basicDie = function(n) { return function() { return 1 + Math.floor(Math.random() * n)}; }
+	var dice = {
+		'd6' : basicDie(6),
+		'd8' : basicDie(8),
+		'd20' : basicDie(20)
+	}
+	$(".die").click(function(event) {
+		$("#result").text(dice[$(event.target).data('die-type')]()).css('opacity', 0).animate({"opacity":  1}, 2000);
+	});
+});
+</script>
+{% endblock %}

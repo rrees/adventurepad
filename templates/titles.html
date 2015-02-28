@@ -1,0 +1,12 @@
+
+
+{% extends "main.html" %}
+
+{% block content %}
+
+<h1>Adventures</h1>
+
+{% for title in titles %}
+	<p>{{ title.name }}</p>
+{% endfor %}
+{% endblock %}

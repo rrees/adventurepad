@@ -1,0 +1,20 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<h1>Fight Resolver</h1>
+
+<form method="POST">
+	{{form.as_p}}
+	<p><button type="submit">Resolve fight</button></p>
+</form>
+
+{% if results %}
+<ul>
+	{% for result in results %}
+	<li>Hero health: {{result.player.health}}; monster health: {{result.monster.health}}</li>
+	{% endfor %}
+</ul>
+
+<p>The fight is won by the {{winner}}</p>
+{% endif %}
+{% endblock %}
