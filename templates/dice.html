@@ -1,18 +1,55 @@
 {% extends 'main.html' %}
 
 {% block content %}
+<style>
+.dice-roller {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	max-width: 30rem;
+}
+
+.dice-roller.button-bar {
+	display: flex;
+	flex-direction: column;
+}
+
+.button-bar.button-bar-buttons {
+	margin: 0;
+	padding-left: 0;
+}
+
+.dice-roller .button-bar-button-wrapper {
+	list-style: none;
+}
+
+.result {
+	font-size: 450%;
+	margin: 0;
+	padding: 0.25rem;
+}
+</style>
+
 <h1>Common dice types</h1>
 
-<p id="result"></p>
+<div id="dice-roller" class="dice-roller">
 
-<ul>
-	<li><button class="die" data-die-type="d6">d6</button></li>
-	<li><button class="die" data-die-type="d8">d8</button></li>
-	<li><button class="die" data-die-type="d20">d20</button></li>
-</ul>
+<div class="button-bar">
+	<ul class="button-bar button-bar-buttons">
+		<li class="button-bar-button-wrapper"><button class="die" data-die-type="d6">d6</button></li>
+		<li class="button-bar-button-wrapper"><button class="die" data-die-type="d8">d8</button></li>
+		<li class="button-bar-button-wrapper"><button class="die" data-die-type="d20">d20</button></li>
+	</ul>
+</div>
+
+<p id="result" class="result"></p>
+</div>
 {% endblock %}
 
 {% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/JSXTransformer.js"></script>
+
 <script>
 $(function() {
 	var basicDie = function(n) { return function() { return 1 + Math.floor(Math.random() * n)}; }
