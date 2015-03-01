@@ -64,14 +64,42 @@ $(function() {
 		$("#result").text(dice[$(event.target).data('die-type')]()).css('opacity', 0).animate({"opacity":  1}, 2000);
 	});
 
+	var basicDie = function(n) { return function() { return 1 + Math.floor(Math.random() * n)}; }
+
+	var rollDice = function(n) {
+		return function() {
+			resultsLabel = basicDie(n)();
+		}
+	};
+
+	var DieButton = React.createClass({
+
+		displayName: "Die button",
+		basicDie: function(n) { return function() { return 1 + Math.floor(Math.random() * n)}; },
+
+		rollDie: function(dieType) {
+			function roll(n) { return 1 + Math.floor(Math.random() * n)};
+			return function() {
+				var value = roll(parseInt(dieType));
+				window.dispatchEvent(new CustomEvent('ap:dr:new-roll', {'detail': {'roll': value}}));
+			}
+		},
+		render: function() {
+			return (
+				<button className="die" data-die-size="{this.props.dieSize}" onClick={this.rollDie(this.props.dieType)}>{this.props.buttonLabel}</button>
+			)
+		}
+	});
+
 	var DiceButtonBar = React.createClass({
 		displayName: 'DiceButtonBar',
+
 		render: function() {
 			return (
 				<ul className="button-bar button-bar-buttons">
-					<li className="button-bar-button-wrapper"><button className="die" data-die-type="d6">d6</button></li>
-					<li className="button-bar-button-wrapper"><button className="die" data-die-type="d8">d8</button></li>
-					<li className="button-bar-button-wrapper"><button className="die" data-die-type="d20">d20</button></li>
+					<li className="button-bar-button-wrapper"><DieButton buttonLabel='d6' dieType='6' /></li>
+					<li className="button-bar-button-wrapper"><DieButton buttonLabel='d8' dieType='8' /></li>
+					<li className="button-bar-button-wrapper"><DieButton buttonLabel='d20' dieType='20' /></li>
 				</ul>
 
 			)
@@ -80,9 +108,18 @@ $(function() {
 
 	var Results = React.createClass({
 		displayName: 'Results',
+		getInitialState: function() {
+			return {'data' : ''}
+		},
+		componentDidMount: function() {
+			var resultsComponent = this;
+			window.addEventListener('ap:dr:new-roll', function(event) {
+				resultsComponent.setState({data: event.detail.roll})
+			});
+		},
 		render: function() {
 			return (
-				<p id="result" className="result">Results here</p>
+				<p id="result" className="result">{this.state.data}</p>
 				)
 		}
 	});
@@ -96,16 +133,19 @@ $(function() {
 				<div className="button-bar">
 				<DiceButtonBar/>
 				</div>
-				<Results />
+				<Results result={this.props.resultsLabel}/>
 				</div>
 			)
 		}
 	})
 
+	var resultsLabel = "here";
+
 	React.render(
-		<DieRoller />,
+		<DieRoller resultsLabel={resultsLabel}/>,
 		document.getElementById('dice-roller-placeholder')
 		);
+
 });
 </script>
 {% endblock %}
