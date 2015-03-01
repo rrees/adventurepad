@@ -32,14 +32,16 @@
 
 <h1>Common dice types</h1>
 
-<div id="dice-roller" class="dice-roller">
+<div id="dice-roller-placeholder">
+	<div id="dice-roller" class="dice-roller">
 
-<div class="button-bar">
-	<ul class="button-bar button-bar-buttons">
-		<li class="button-bar-button-wrapper"><button class="die" data-die-type="d6">d6</button></li>
-		<li class="button-bar-button-wrapper"><button class="die" data-die-type="d8">d8</button></li>
-		<li class="button-bar-button-wrapper"><button class="die" data-die-type="d20">d20</button></li>
-	</ul>
+	<div class="button-bar">
+		<ul class="button-bar button-bar-buttons">
+			<li class="button-bar-button-wrapper"><button class="die" data-die-type="d6">d6</button></li>
+			<li class="button-bar-button-wrapper"><button class="die" data-die-type="d8">d8</button></li>
+			<li class="button-bar-button-wrapper"><button class="die" data-die-type="d20">d20</button></li>
+		</ul>
+	</div>
 </div>
 
 <p id="result" class="result"></p>
@@ -50,7 +52,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/JSXTransformer.js"></script>
 
-<script>
+<script type="text/jsx">
 $(function() {
 	var basicDie = function(n) { return function() { return 1 + Math.floor(Math.random() * n)}; }
 	var dice = {
@@ -61,6 +63,49 @@ $(function() {
 	$(".die").click(function(event) {
 		$("#result").text(dice[$(event.target).data('die-type')]()).css('opacity', 0).animate({"opacity":  1}, 2000);
 	});
+
+	var DiceButtonBar = React.createClass({
+		displayName: 'DiceButtonBar',
+		render: function() {
+			return (
+				<ul className="button-bar button-bar-buttons">
+					<li className="button-bar-button-wrapper"><button className="die" data-die-type="d6">d6</button></li>
+					<li className="button-bar-button-wrapper"><button className="die" data-die-type="d8">d8</button></li>
+					<li className="button-bar-button-wrapper"><button className="die" data-die-type="d20">d20</button></li>
+				</ul>
+
+			)
+		}
+	});
+
+	var Results = React.createClass({
+		displayName: 'Results',
+		render: function() {
+			return (
+				<p id="result" className="result">Results here</p>
+				)
+		}
+	});
+
+	var DieRoller = React.createClass({
+		displayName: 'DieRoller',
+		render: function() {
+			return (
+				<div id="dice-roller" className="dice-roller">
+
+				<div className="button-bar">
+				<DiceButtonBar/>
+				</div>
+				<Results />
+				</div>
+			)
+		}
+	})
+
+	React.render(
+		<DieRoller />,
+		document.getElementById('dice-roller-placeholder')
+		);
 });
 </script>
 {% endblock %}
